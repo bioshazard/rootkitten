@@ -1,0 +1,14 @@
+version: "2.1"
+
+services:
+  gun:
+    image: gundb/gun
+    labels:
+      - io.docksal.virtual-host=gun.bioshazard.com
+      - io.docksal.virtual-port=8765
+      - io.docksal.cert-name=gun.bioshazard.com
+    expose:
+      - 8765
+
+  db:
+    image: alpine:latest
