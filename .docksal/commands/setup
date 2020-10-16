@@ -1,0 +1,10 @@
+#!/bin/bash -el
+
+#: exec_target = cli
+
+# Install Vue CLI
+npm install -g @vue/cli
+
+# Install Gun
+#npm install gun
+#npm install vue-gun --save
