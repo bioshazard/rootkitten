@@ -2,9 +2,13 @@
 
 #: exec_target = cli
 
+cd rk2
+
 # Install Vue CLI
 npm install -g @vue/cli
 
-# Install Gun
-#npm install gun
+
+# Install App Deps
+#npm install gun --save
 #npm install vue-gun --save
+#npm i vue-uuid --save

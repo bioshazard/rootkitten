@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Sources from '../views/Sources.vue'
+import ZK from '../views/ZK.vue'
+import Config from '../views/Config.vue'
 
 Vue.use(VueRouter)
 
@@ -23,6 +25,16 @@ const routes = [
     path: '/sources',
     name: 'Sources',
     component: Sources
+  },
+  {
+    path: '/zk',
+    name: 'Zettlekasten',
+    component: ZK
+  },
+  {
+    path: '/config',
+    name: 'Config',
+    component: Config
   }
 ]
 

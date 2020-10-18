@@ -7,12 +7,17 @@ import router from './router'
 import Gun from 'gun'
 import VueGun from 'vue-gun';
 
-// localStorage.clear();
+// localStorage.clear()
 var gun = new Gun()
 
 Vue.use(VueGun, {
     gun: gun // your gun instance
 });
+
+import UUID from "vue-uuid";
+
+Vue.use(UUID);
+
 
 Vue.config.productionTip = false
 

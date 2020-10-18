@@ -4,23 +4,19 @@ services:
 
   cli:
     labels:
-      - io.docksal.virtual-host=${VIRTUAL_HOST}
+      # - io.docksal.virtual-host=${VIRTUAL_HOST}
       - io.docksal.virtual-port=3000
     working_dir: /var/www/rk2
     environment:
       - PORT=3000
     command: ["bash", "-lc", "npm run serve"]
-    expose:
-      - 3000
-    ports:
-      - "3000:3000"
 
-  gun:
-    image: gundb/gun
-    labels:
-      # - io.docksal.virtual-host=gun.bioshazard.com
-      - io.docksal.virtual-host=gun.${VIRTUAL_HOST}
-      - io.docksal.virtual-port=8765
-      - io.docksal.cert-name=gun.bioshazard.com
-    expose:
-      - 8765
+  # gun:
+  #   image: gundb/gun
+  #   labels:
+  #     # - io.docksal.virtual-host=gun.bioshazard.com
+  #     - io.docksal.virtual-host=gun.${VIRTUAL_HOST}
+  #     - io.docksal.virtual-port=8765
+  #     - io.docksal.cert-name=gun.bioshazard.com
+  #   expose:
+  #     - 8765

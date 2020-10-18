@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>rk</title>
+  </head>
+  <body>
+    <div id="app">
+      <div class="Sandbox">
+        <h1>Sandbox</h1>
+
+        <div class="">
+          <button @click="dbReset">Reset Database</button>
+
+        </div>
+      </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/gun/examples/jquery.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/gun/lib/webrtc.js"></script> -->
+
+    <script type="text/javascript">
+      localStorage.clear();
+      // var g = Gun();
+
+      // Vue app
+      var gunSandbox = new Vue({
+        el: '#app',
+        data: () => ({
+          myvar: "asdf",
+          srcs: [ ],
+          zks: [ ],
+          newSrc: {
+            title: "",
+            link: ""
+          },
+          newZk: {
+            content: "",
+            srcLinks: []
+          },
+          addZkLinkSelected: "none"
+        }),
+        methods: {
+          mapOnceCallback: function(val, id) {
+            console.log("ID:",id)
+            console.log("Val:",val)
+          },
+          dbReset: function() {
+            localStorage.clear();
+            var g = Gun()
+            console.clear()
+            console.log("Reset Done")
+
+            var uuid = 'zk' + Date.now()
+
+            // Create ZK examples
+            var zk1 = g.get(uuid).put({
+              uuid: uuid,
+              content: "root1"
+            })
+
+            // Add to root index
+            g.get('zks').get('index').set(zk1)
+
+            // Print cards
+            g.get('zks').get('index').map().once(this.mapOnceCallback)
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

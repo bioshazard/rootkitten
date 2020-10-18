@@ -2,6 +2,9 @@
   <div class="sources">
     <h1>Sources</h1>
     <div class="">
+      Bookmarklet: <a href="javascript:(function()%7Bvar%20baseUrl%20%3D%20%20'https%3A%2F%2Frk.bioshazard.com%2F'%3B%0Awindow.open(baseUrl%20%2B%20'%3Ftitle%3D'%20%2B%20document.title%20%2B%20'%26text%3D'%20%2B%20document.URL%2C%20'_blank')%7D)()%3B">RK</a>
+    </div>
+    <div class="">
       <form @submit.prevent="addSource">
         <ul>
           <li>
@@ -28,6 +31,14 @@
 </template>
 
 <script>
+/*
+
+# Sources Component
+
+* Add Sources (title, reference)
+* List Sources
+
+*/
   export default {
     created() {
       console.log('Component has been created!');
@@ -37,8 +48,8 @@
       return {
         srcs: [ ],
         newSource: {
-            title: "test",
-            reference: "test"
+            title: "",
+            reference: ""
         },
         addSrc: function(val, id) {
           console.log(id, val)
