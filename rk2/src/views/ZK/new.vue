@@ -1,15 +1,19 @@
 <style media="screen">
 	.newCard textarea {
 		width: 100%;
-		height: 100px;
+		height: 150px;
+		margin-bottom: 10px;
+		padding: 5px;
 	}
 	.newCard .submit {
-		width: 100px;
+		width: 100%;
 		height: 60px;
 	}
 	.newCard .title {
 		width: 100%;
+		margin-bottom: 10px;
 		font-size: 58px;
+		padding: 5px;
 	}
 </style>
 
@@ -18,7 +22,7 @@
 		<h2><input type="text" size="42" placeholder="Parent" v-model="newCardData.parent"> / New Card</h2>
 		<div class="newCard">
 			<form @submit.prevent="addCard">
-				<input type="text" class="title" placeholder="Title" v-model="newCardData.title">
+				<input ref="title" type="text" class="title" placeholder="Title" v-model="newCardData.title">
 				<textarea v-model="newCardData.content" placeholder="Thoughts?" name="name"></textarea>
 				<input class="submit" type="submit" name="" value="Submit">
 			</form>
@@ -34,6 +38,9 @@
 			} else {
 				this.newCardData.parent = this.$route.params.id;
 			}
+		},
+		mounted() {
+			this.$refs.title.focus()
 		},
 		data() {
 			return {

@@ -5,13 +5,19 @@
 			<router-link :to="'/zk/view/' + displayCard.id">
 				<!-- Must use $route value to update triggers -->
 				<!-- {{$route.params.id}} -->
-				{{displayCard.id}}
+				{{displayCard.title}}
 			</router-link>
 		</h2>
 		<p>{{displayCard.content}}</p>
 		<router-link :to="'/zk/new/' + displayCard.id">
 			Reply
 		</router-link>
+		<h3>Replies</h3>
+		<div class="" v-for="(reply,index) in replies" :key="index">
+			<router-link :to="'/zk/view/' + reply.id">
+				{{reply.title}}
+			</router-link>
+		</div>
 
 		<!-- <div class="zk-root-card zk-card" v-for="record in $parent.replyCards" v-bind:key="record.id">
 			<div class="zk-card-title">
@@ -43,7 +49,8 @@
 		// },
 		data () {
 			return {
-				displayCard: { }
+				displayCard: { },
+				replies: [ ]
 			}
 		},
 		// beforeRouteEnter(to, from, next) {
@@ -70,9 +77,14 @@
 					console.log(k, v)
 					this.displayCard = {
 						id: k,
+						title: v.title,
 						content: v.content,
 						parent: v.parent
 					}
+				}.bind(this))
+				this.$gun.get(id+'/replies').map().once(function(v,k){
+					v.id = k
+					this.replies.push(v)
 				}.bind(this))
 			}
 		},

@@ -9,6 +9,7 @@ services:
     working_dir: /var/www/rk2
     environment:
       - PORT=3000
+      # https://daten-und-bass.io/blog/enabling-hot-reloading-with-vuejs-and-vue-cli-in-docker/
       - CHOKIDAR_USEPOLLING=true
     command: ["bash", "-lc", "npm run serve"]
 

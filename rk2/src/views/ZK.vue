@@ -7,7 +7,7 @@
 					<h2><router-link to="/zk/new">Root Cards</router-link></h2>
 					<div v-for="record in rootCards" :key="record.id">
 						<router-link :to="'/zk/view/' + record.id">
-							{{record.content}}
+							{{record.title}}
 						</router-link>
 
 						<!-- <a href="/zk/" @click="explore(record.id)">
