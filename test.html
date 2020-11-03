@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title>RootKit</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="/manifest.json">
+    <script type="text/javascript">
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(function(reg){
+            console.log("Service worker registered.");
+        }).catch(function(err) {
+          console.log("Service worker not registered. This happened:", err)
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <h1>RootKit</h1>
+
+    Bookmarklet: <a href="javascript:(function()%7Bvar%20baseUrl%20%3D%20%20'https%3A%2F%2Frk.bioshazard.com%2F'%3B%0Awindow.open(baseUrl%20%2B%20'%3Ftitle%3D'%20%2B%20document.title%20%2B%20'%26text%3D'%20%2B%20document.URL%2C%20'_blank')%7D)()%3B">RK</a>
+
+    <div id="app">
+      <div class="pure-g">
+        <div class="pure-u-1-2">
+          <h2>Sources</h2>
+          <div class="">
+            <form href="#" @submit.prevent="handleNewSrc">
+              <ul>
+                <li>Title <input type="text" name="" value="" v-model="newSrc.title"></li>
+                <li>Link <input type="text" name="" value="" v-model="newSrc.link"></li>
+                <li><input type="submit" name="" value="Submit"></li>
+              </ul>
+            </form>
+          </div>
+          <div class="">
+            <button @click="loadSrcs" type="button" name="button">Src Load</button>
+          </div>
+          <div class="">
+            <ul>
+              <li v-for="(values) in srcs.slice().reverse()">
+                <a :title="values.title" target="_blank" :href="values.ref">{{ values.title.length < 40 ? values.title : values.title.substring(0,40) + "..." }}</a>
+                <span style="float: right">{{values.id.split('/')[1]}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pure-u-1-2">
+          <h2>Zettlekasten</h2>
+
+          <div class="">
+            <form href="#" @submit.prevent="handleNewZk">
+              <ul>
+                <li><textarea id="zkpad" type="text" name="" value="" v-model="newZk.content"></textarea></li>
+                <li>
+                  <button @click="addZkLink" type="button" name="button">Add</button>
+                  <select class="" v-model="addZkLinkSelected" name="">
+                    <option v-for="(values) in srcs.slice().reverse()" :value="values.id">{{values.title}}</option>
+                  </select>
+                  <ul>
+                    <li>Selected: {{addZkLinkSelected}}</li>
+                    <li>Linked</li>
+                    <li v-for="link in newZk.srcLinks">{{link}}</li>
+                  </ul>
+                </li>
+                <li><input type="submit" name="" value="Submit"></li>
+              </ul>
+            </form>
+          </div>
+
+          <div class="zks">
+            <ul>
+              <li v-for="(values) in zks.slice().reverse()">
+                {{values.content}}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/gun/examples/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gun/lib/webrtc.js"></script>
+
+    <script type="text/javascript">
+
+      function gprep() {
+        var src1 = g.get('source/a' + getNow()).put({
+          title: "A visualGraph - A visualizer / explorer for Gun DB data",
+          ref: "https://github.com/dletta/visualGraph"
+        })
+        var src2 = g.get('source/b' + getNow()).put({
+          title: "B visualGraph - A visualizer / explorer for Gun DB data",
+          ref: "https://github.com/dletta/visualGraph"
+        })
+        sources.set(src1)
+        sources.set(src2)
+
+        var zk1 = g.get('zk/1').put({
+          content: "asdf"
+        })
+        zk1.get('src').set(src1)
+        zk1.get('src').set(src2)
+        var exTag = g.get('tag/example')
+        g.get('tags').set(exTag)
+        zk1.get('tags').set(exTag)
+        zks.set(zk1)
+      }
+
+      var parsed = new URL(window.location.toString());
+      console.log(parsed)
+      if(parsed.searchParams.get('debug') == null) {
+        var g = Gun('https://gun.bioshazard.com/gun');
+        var sources = g.get('sources');
+        var zks = g.get('zks');
+      } else {
+        console.log("DEBUG MODE")
+        localStorage.clear();
+        var g = Gun();
+        var sources = g.get('sources');
+        var zks = g.get('zks');
+        gprep()
+
+      }
+
+      function getNow() {
+        // var now = new Date();
+        // var date = '' + now.getFullYear() + (now.getMonth()+1) + now.getDate()
+        // var time = '' + now.getHours() + now.getMinutes() + now.getSeconds()
+        // return date + time
+        return Date.now()
+      }
+
+
+
+      // Clear out local storage so we can start fresh each time.
+      // localStorage.clear();
+      // var g = Gun();
+
+
+
+
+      // Vue app
+      var rootKit = new Vue({
+        el: '#app',
+        data: () => ({
+          myvar: "asdf",
+          srcs: [ ],
+          zks: [ ],
+          newSrc: {
+            title: "",
+            link: ""
+          },
+          newZk: {
+            content: "",
+            srcLinks: []
+          },
+          addZkLinkSelected: "none"
+        }),
+        methods: {
+          addZkLink: function() {
+            console.log("add link")
+            console.log(this.addZkLinkSelected)
+            this.newZk.srcLinks.push(this.addZkLinkSelected)
+          },
+          // prettyDate: function(utc) {
+          //   console.log(utc)
+          //   console.log(new Date(utc))
+          //   var d = new Date(utc)
+          //   return d.toLocaleString()
+          // },
+          addSrc: function(val, id) {
+            // console.log(id, val)
+            this.srcs.push({
+              id: id,
+              title: val.title,
+              ref: val.ref
+            })
+          },
+          addZk: function(val, id) {
+            // console.log(id, val)
+            this.zks.push({
+              id: id,
+              content: val.content
+            })
+          },
+          loadSrcs: function() {
+            console.log("Loading srcs...")
+            sources.map().on(this.addSrc)
+          },
+          loadZks: function() {
+            console.log("Loading zks...")
+            zks.map().on(this.addZk)
+          },
+          handleNewSrc: function(e) {
+            console.log("New Form")
+            console.log(this.newSrc.link)
+            var nuSrc = g.get('source/' + getNow()).put({
+              title: this.newSrc.title,
+              ref: this.newSrc.link
+            })
+            sources.set(nuSrc)
+            this.newSrc = { title: "", ref: "" }
+          },
+          handleNewZk: function(e) {
+            console.log("New Form ZK")
+            console.log(this.newZk.link)
+            var nuZk = g.get('zk/' + getNow()).put({
+              content: this.newZk.content
+            })
+            // if(this.newZk.srcLinks.length != 0) {
+            //   for (var i = 0; i < this.newZk.srcLinks; i++) {
+            //     nuZk.get('srcLinks').set( g.get(this.newZk.srcLinks[i]) )
+            //   }
+            // }
+            zks.set(nuZk)
+            this.newZk = { content: "", srcLinks: [] }
+          }
+        }
+      })
+      rootKit.loadSrcs()
+      rootKit.loadZks()
+
+
+      function processShare() {
+        var parsedUrl = new URL(window.location.toString());
+        console.log(parsedUrl)
+        if(parsedUrl.searchParams.get('text')) {
+          var parsedText = parsedUrl.searchParams.get('text')
+          console.log(parsedText)
+          if(parsedText.startsWith('http')) {
+            // alert(window.location.toString())
+            rootKit.newSrc.link = parsedText
+            rootKit.newSrc.title = parsedUrl.searchParams.get('title')
+          }
+        }
+      }
+
+      // Handle PWA share
+      processShare()
+
+    </script>
+  </body>
+</html>

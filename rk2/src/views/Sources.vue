@@ -21,14 +21,40 @@
     </div>
     <div class="">
       <h3>Source List</h3>
-      <ul>
-        <li v-for="values in srcs.slice().reverse()" v-bind:key="values.id">
-          {{values.title}} - {{values.reference}} - {{values.id}}
-        </li>
-      </ul>
+      <div class="src-card" v-for="src in srcs" v-bind:key="src.id">
+				<!-- {{src}} -->
+				<div class="src-card-body">
+					<a :href="src.reference">{{src.title}}</a>
+					<span>{{prettySlashDate(src.created["#"])}}</span>
+				</div>
+        <!-- {{values.title}} - {{values.reference}} - {{values.id}} -->
+      </div>
     </div>
   </div>
 </template>
+
+<style>
+/* textarea {
+	width: 100%;
+	height: 100px;
+}
+.src-card {
+	border: 1px solid black;
+	margin-bottom: 10px;
+}
+.src-card > div {
+	padding: 5px;
+}
+.src-card-title {
+	background: #eee;
+	border-bottom: 1px solid black;
+}
+.src-card-body span {
+	float: right
+}
+.src-card-tags {
+} */
+</style>
 
 <script>
 /*
@@ -46,39 +72,74 @@
     },
     data () {
       return {
-        srcs: [ ],
+        srcs: { },
         newSource: {
             title: "",
             reference: ""
         },
-        addSrc: function(val, id) {
-          console.log(id, val)
 
-          val['id'] = id
-
-          //val.pop("_")
-          val["_"] = null
-
-          this.srcs.push(val)
-        },
-        loadSrcs: function() {
-          console.log("Loading srcs...")
-          this.srcs = []
-          this.$gun.get('sources').map().on(this.addSrc.bind(this))
-        },
-        addSource: function () {
-          console.log("# Add Source fn")
-
-          // console.log(this.$gun)
-          var newSource = this.$gun.get('source/' + Date.now())
-          newSource.put(this.newSource)
-          this.$gun.get('sources').set(newSource)
-          this.$gun.get('sources').map().once(v => console.log(v.reference))
-
-
-          this.newSource = { title: "", reference: "" }
-        }
       }
-    }
+    },
+		methods: {
+			prettySlashDate: function(slashDate) {
+					var splitDate = slashDate.split('/')
+					var d = new Date(
+						splitDate[0], // Year
+						splitDate[1]-1, // Month (-1 to un-offset)
+						splitDate[2], // Day
+						splitDate[3], // Hour
+						splitDate[4], // Minute
+						splitDate[5], // Second
+						0, // MS (ignored)
+					)
+					return d;
+			},
+			timeTree: function(timestamp = null) {
+				var d
+				// If no timestamp is provided, assume "now"
+				if(timestamp === null) {
+					d = new Date()
+				} else {
+					d = new Date(timestamp)
+				}
+
+				// use .back(X) to dial back date scope
+				return this.$gun
+					.get(d.getFullYear())
+					.get(d.getMonth()+1)
+					.get(d.getDate())
+					.get(d.getHours())
+					.get(d.getMinutes())
+					.get(d.getSeconds())
+			},
+			loadSrcs: function() {
+				console.log("Loading srcs...")
+				this.srcs = { }
+				this.$gun.get('sources').map().on(this.loadSrcUI.bind(this))
+			},
+			loadSrcUI: function(val, id) {
+				console.log(id, val)
+
+				//val.pop("_")
+				val["_"] = null
+
+				this.srcs[id] = val
+			},
+			addSource: function () {
+				console.log("# Add Source fn")
+
+				// Create Source Node
+				var newSourceNode = this.$gun.get(this.$uuid.v4()).set(this.newSource)
+
+				// Index to current timestamp
+        var newSourceTimestamp = this.timeTree()
+        newSourceTimestamp.set(newSourceNode) // Must set this first so the timestamp record exists
+        newSourceNode.get('created').put(newSourceTimestamp)
+
+				this.$gun.get('sources').set(newSourceNode)
+
+				this.newSource = { title: "", reference: "" }
+			}
+		}
   }
 </script>

@@ -1,14 +1,20 @@
 #!/bin/bash -el
 
-#: exec_target = cli
+
 
 cd rk2
 
-# Install Vue CLI
-npm install -g @vue/cli
+npm install
 
-
-# Install App Deps
-#npm install gun --save
-#npm install vue-gun --save
-#npm i vue-uuid --save
+# # Install Vue CLI
+# npm install -g @vue/cli
+#
+# # Install App Deps
+# npm install amark/gun#master --save
+# npm install vue-gun --save
+# npm i vue-uuid --save
+#
+# # Vuex
+# npm install vuex --save
+# npm install es6-promise --save
+# # npm install eslint-loader --save

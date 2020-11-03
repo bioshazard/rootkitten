@@ -1,0 +1,25 @@
+sync:
+  defaults:
+    mode: "two-way-resolved"
+    ignore:
+      # Need the .git folder inside the container for npm issues.
+      vcs: false
+      paths:
+        - "/*.sql" # top level sql backups
+        - "/*.sql.gz" # top level sql backups
+        - "/project/**/node_modules/"
+        - "/vendor/"
+        - "/deploy/"
+        - ".history/" # vsCode local history
+        - "/project/sites/*/files/" # Drupal files
+        # The following are updates when webpack/PL compiled theme
+        - "/project/**/dist/app-node-pl/pl/" # Pattern lab static site
+        - "/project/**/node_modules/@basalt/twig-renderer/dist/"
+        - "/project/**/dependencyGraph.json"
+    permissions:
+      defaultFileMode: 644
+      defaultDirectoryMode: 755
+  mySyncSession:
+    alpha: "."
+    # CHANGE THIS to the name of your project CLI container.
+    beta: "docker://docker@rootkit_cli_1/var/www"

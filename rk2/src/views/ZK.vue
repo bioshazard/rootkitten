@@ -1,75 +1,27 @@
 <template>
   <div class="zk">
-    <h1>Zettelkasten</h1>
-    <div class="">
-      <h2>New Card</h2>
-      <form @submit.prevent="addCard">
-        <div class="">
-          Parent: <input type="text" size="64" placeholder="Parent" v-model="newCardData.parent">
-          <textarea v-model="newCardData.content" placeholder="Thoughts?" name="name"></textarea>
-          <input type="submit" name="" value="Submit">
-        </div>
-      </form>
-    </div>
-    <div class="">
-      <h2>Root Cards</h2>
-      <div class="zk-root-card zk-card" v-for="record in rootCards" v-bind:key="record.id">
-        <div class="zk-card-title">
-          {{record.id}}
-          <span style="float: right">
-            <a href="#" @click.prevent="setParent(record.id)">Reply</a> | <a href="#" @click.prevent="loadReplyCards(record.id)">View Replies</a>
+		<h1>Zettelkasten</h1>
+		<div class="pure-g zk-root">
+			<div class="pure-u-1-5">
+				<div class="zkRootCards">
+					<h2><router-link to="/zk/new">Root Cards</router-link></h2>
+					<div v-for="record in rootCards" :key="record.id">
+						<router-link :to="'/zk/view/' + record.id">
+							{{record.content}}
+						</router-link>
 
-          </span>
-        </div>
-        <div class="zk-card-content">
-          {{record.content}}
-        </div>
-        <!-- <div class="zk-card-tags">
-          Tags: TBD...
-        </div> -->
-      </div>
-      <div class="">
-        <h2>Explorer</h2>
-        <div class="zk-root-card zk-card" v-for="record in replyCards" v-bind:key="record.id">
-          <div class="zk-card-title">
-            {{record.id}}
-            <span style="float: right">
-              <a href="#" @click.prevent="setParent(record.id)">Reply</a> | <a href="#" @click.prevent="loadReplyCards(record.id)">View Replies</a>
-            </span>
-          </div>
-          <div class="zk-card-content">
-            {{record.content}}
-          </div>
-          <!-- <div class="zk-card-tags">
-            Tags: TBD...
-          </div> -->
-        </div>
-      </div>
-    </div>
+						<!-- <a href="/zk/" @click="explore(record.id)">
+							{{record.content}}
+						</a> -->
+					</div>
+				</div>
+			</div>
+			<div class="pure-u-4-5">
+				<router-view :key="$route.fullPath"/>
+			</div>
+		</div>
   </div>
 </template>
-
-<style scoped>
-  textarea {
-    width: 100%;
-    height: 100px;
-  }
-  .zk-card {
-    border: 1px solid black;
-    margin-bottom: 10px;
-  }
-  .zk-card > div {
-    padding: 5px;
-  }
-  .zk-card-title {
-    background: #eee;
-    border-bottom: 1px solid black;
-  }
-  .zk-card-tags {
-    /* background: #eee;
-    border-top: 1px solid black; */
-  }
-</style>
 
 <script>
 /*
@@ -114,6 +66,8 @@ get(zk).
       console.clear()
       console.log('Component has been created!');
       this.loadRootCards()
+
+			// console.log(this.$parent)
     },
     data () {
       return {
@@ -123,78 +77,49 @@ get(zk).
             content: null,
             parent: null
         },
+				currentParentExplore: 0,
+				exploreCard: {
+					title: "test",
+					content: "asdf"
+				}
       }
     },
+		computed: {
+			// count () {
+			//   return this.$store.state.count
+			// }
+			gunTest () {
+				return 'asdf';
+			// this.$store.getters.gunTest
+			}
+		},
     methods: {
-      timeTree: function(timestamp = null) {
-        var d
-        // If no timestamp is provided, assume "now"
-        if(timestamp === null) {
-          d = new Date()
-        } else {
-          d = new Date(timestamp)
-        }
-        // use .back(X) to dial back date scope
-        return this.$gun
-          .get(d.getFullYear())
-          .get(d.getMonth())
-          .get(d.getDay())
-          .get(d.getHours())
-          .get(d.getMinutes())
-          .get(d.getSeconds())
-      },
       // Enable listeners on root cards index, update list
       loadRootCards: function() {
         console.log("# Load Root Cards")
         this.rootCards = { }
+				// this.$gun.get('zk').get('root').on(this.updateRootCardsUI2.bind(this))
         this.$gun.get('zk').get('root').map().on(this.updateRootCardsUI.bind(this))
       },
-      // Function to update list from load
       updateRootCardsUI: function(val, id) {
         val['id'] = id
         //val.pop("_")
         val["_"] = null
-        // this.rootCards.push(val)
-        this.rootCards[id] = val
+
+				// https://vuejs.org/v2/api/#Vue-set
+				// Array reactivity requires updates through Vue.set
+				this.$set(this.rootCards, id, val)
+
+				console.log("ROOT UPDATED")
       },
       setParent: function(parentId) {
         console.log(parentId)
+
         this.newCardData.parent = parentId
-      },
-      // Add Card to the ZK, include parent if set
-      addCard: function () {
-        console.log("# Add Card")
-        console.log(this.newCardData)
-
-        if(this.newCardData.content === null) {
-          console.log("Content cant be null. Not saving...")
-          return
-        }
-
-        // Create Card Entry
-        var newCardNode = this.$gun.get(this.$uuid.v4()).put(this.newCardData)
-
-        // Index to current timestamp
-        var newCardTimestamp = this.timeTree()
-        newCardTimestamp.set(newCardNode)
-        newCardNode.get('created').put(newCardTimestamp)
-
-        // Add to root (else as reply if parent is set)
-        if (this.newCardData.parent === null) {
-          this.$gun.get('zk').get('root').set(newCardNode)
-        } else {
-          var parentNode = this.$gun.get(this.newCardData.parent)
-          parentNode.get('replies').set(newCardNode)
-          newCardNode.get('parent').put(parentNode)
-        }
-
-        // Reset Form Data
-        this.newCardData = { content: "", parent: ""}
       },
       // Reply explorer
       loadReplyCards: function(parentId) {
         console.log("# Load Reply Cards under",parentId)
-        this.replyCards = { }
 
         // TODO: Why doesn't this work in Vue, but it works in console with var g = Gun()??
         // this.$gun.get(parentId).get('replies').map().once((v,k) => console.log(k,v.content))
@@ -203,6 +128,13 @@ get(zk).
         // This works around the above weirdness... I swear .get(x).get(y) was exactly like x/y...
         // this.$gun.get('5ffd5c16-f769-44f1-a7ab-772140e9f273/replies').map().once((v,k) => console.log(k,v))
         // this.$gun.get(parentId + '/replies').map().once(this.updateReplyCardsUI.bind(this))
+
+        // TODO: Because I can not use .once, I must unset the .on in loadReplyCards
+        // this.$gun.get(this.newCardData.parent + '/replies').map().off(this.updateReplyCardsUI.bind(this))
+
+				// this.$gun.get(this.currentParentExplore + '/replies').map().off()
+				// this.currentParentExplore = parentId
+				this.replyCards = {}
         this.$gun.get(parentId + '/replies').map().on(this.updateReplyCardsUI.bind(this))
       },
       updateReplyCardsUI: function(val, id) {
@@ -218,8 +150,44 @@ get(zk).
 
         console.log(this.replyCards)
       },
+			explore: function(id) {
+				this.exploreCard = { }
+				this.$gun.get(id).once(function(v,k){
+					// console.log(this.newCardData.content)
+					console.log(k, v.content)
 
-
+					// Load up explorer cards
+					this.exploreCard = v
+				}.bind(this))
+			}
     }
   }
 </script>
+
+<style scoped>
+	.zkRootCards {
+		border-right: 1px solid black;
+		background: #eee;
+	}
+  textarea {
+    width: 100%;
+    height: 100px;
+  }
+	.zk-root > div > div {
+		padding: 10px;
+	}
+	/*
+  .zk-card {
+    border: 1px solid black;
+    margin-bottom: 10px;
+  }
+  .zk-card > div {
+    padding: 5px;
+  }
+  .zk-card-title {
+    background: #eee;
+    border-bottom: 1px solid black;
+  }
+  .zk-card-tags {
+  } */
+</style>

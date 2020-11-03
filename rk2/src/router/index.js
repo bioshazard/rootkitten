@@ -3,6 +3,9 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Sources from '../views/Sources.vue'
 import ZK from '../views/ZK.vue'
+import ZKnew from '../views/ZK/new.vue'
+import ZKview from '../views/ZK/view.vue'
+import ZKdefault from '../views/ZK/default.vue'
 import Config from '../views/Config.vue'
 
 Vue.use(VueRouter)
@@ -29,7 +32,21 @@ const routes = [
   {
     path: '/zk',
     name: 'Zettlekasten',
-    component: ZK
+    component: ZK,
+		children: [
+			{
+				path: '',
+				component: ZKdefault
+			},
+			{
+				path: 'new/:id?',
+				component: ZKnew
+			},
+			{
+				path: 'view/:id',
+				component: ZKview
+			}
+		]
   },
   {
     path: '/config',

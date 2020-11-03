@@ -9,6 +9,7 @@ services:
     working_dir: /var/www/rk2
     environment:
       - PORT=3000
+      - CHOKIDAR_USEPOLLING=true
     command: ["bash", "-lc", "npm run serve"]
 
   # gun:

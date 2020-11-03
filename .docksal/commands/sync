@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mutagen sync create --name=web-app-code ~/project user@example.org:~/project
