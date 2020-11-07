@@ -1,23 +1,102 @@
+<style>
+	.zkParent {
+		border: 1px solid black;
+		/* padding: 5px; */
+		margin-bottom: 10px;
+
+	}
+	.zkParent h2 {
+		margin-top: 0;
+		background: #eee;
+		padding: 5px;
+	}
+
+	.zkParent h4 {
+		margin-top: 0;
+		background: #eee;
+		padding: 5px;
+	}
+
+	.zkDate {
+		float: right;
+	}
+
+	.zkParent p {
+		padding: 5px;
+	}
+	.zkReplyLink {
+		width: fit-content;
+		padding: 15px;
+		/* border: 1px solid black; */
+		background: #1E90FF;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+	.zkReplyLink a {
+		text-decoration: none;
+		color: white;
+	}
+</style>
+
 <template>
 	<div class="">
-		<h2>
-			View /
-			<router-link :to="'/zk/view/' + displayCard.id">
-				<!-- Must use $route value to update triggers -->
-				<!-- {{$route.params.id}} -->
-				{{displayCard.title}}
-			</router-link>
-		</h2>
-		<p>{{displayCard.content}}</p>
-		<router-link :to="'/zk/new/' + displayCard.id">
-			Reply
-		</router-link>
-		<h3>Replies</h3>
-		<div class="" v-for="(reply,index) in replies" :key="index">
-			<router-link :to="'/zk/view/' + reply.id">
-				{{reply.title}}
+		<div class="zkParent">
+			<h4>
+				<router-link v-if="!parentCard.empty" :to="'/zk/view/' + zkgun.urlUuidTitle(parentCard)">{{parentCard.title}}</router-link>
+				<span v-else>Root</span>
+
+				> <router-link :to="'/zk/view/' + zkgun.urlUuidTitle(displayCard)">
+					<!-- Must use $route value to update triggers -->
+					<!-- {{$route.params.id}} -->
+					{{displayCard.title}}
+
+
+				</router-link>
+
+				<span class="zkDate">
+					{{zkgun.prettySlashDate(displayCard.created["#"])}}
+				</span>
+			</h4>
+			{{zkgun.prettySlashDate(displayCard.created["#"])}}
+
+			<p>{{displayCard.content}}</p>
+		</div>
+
+		<div class="zkReplyLink">
+			<router-link  :to="'/zk/new/' + displayCard.id">
+					Reply
 			</router-link>
 		</div>
+
+
+		<div class="zkParent" v-for="(reply,index) in replies" :key="index">
+			<h4>
+				<router-link :to="'/zk/view/' + zkgun.urlUuidTitle(reply)">
+					{{reply.title}}
+				</router-link>
+
+				<span class="zkDate">
+					{{zkgun.prettySlashDate(displayCard.created["#"])}}
+				</span>
+
+			</h4>
+			<p>{{reply.title}}</p>
+		</div>
+
+<!--
+
+
+
+
+		<h3>Replies</h3>
+		<div class="" v-for="(reply,index) in replies" :key="index">
+			<h4>
+				<router-link :to="'/zk/view/' + zkgun.urlUuidTitle(reply)">
+					{{reply.title}}
+				</router-link>
+			</h4>
+			<p>{{reply.title}}</p>
+		</div> -->
 
 		<!-- <div class="zk-root-card zk-card" v-for="record in $parent.replyCards" v-bind:key="record.id">
 			<div class="zk-card-title">
@@ -49,6 +128,7 @@
 		// },
 		data () {
 			return {
+				parentCard: { empty: true },
 				displayCard: { },
 				replies: [ ]
 			}
@@ -79,12 +159,22 @@
 						id: k,
 						title: v.title,
 						content: v.content,
+						created: v.created,
 						parent: v.parent
 					}
 				}.bind(this))
+
 				this.$gun.get(id+'/replies').map().once(function(v,k){
 					v.id = k
 					this.replies.push(v)
+				}.bind(this))
+
+				this.$gun.get(id).get('parent').once(function(v){
+					this.parentCard = {
+						id: v.id,
+						created: v.created,
+						title: v.title
+					}
 				}.bind(this))
 			}
 		},

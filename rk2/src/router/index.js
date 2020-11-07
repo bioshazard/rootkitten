@@ -43,7 +43,7 @@ const routes = [
 				component: ZKnew
 			},
 			{
-				path: 'view/:id',
+				path: 'view/:id/:title?',
 				component: ZKview
 			}
 		]

@@ -35,6 +35,9 @@ var zkgun = {
 			.get(d.getMinutes())
 			.get(d.getSeconds())
 	},
+	urlUuidTitle: function(node) {
+		return node.id + '/' + node.title.replace(/[^a-zA-Z0-9-_]/g, '-')
+	}
 }
 
 export default zkgun

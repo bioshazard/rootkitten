@@ -84,11 +84,13 @@
           newCardNode.get('parent').put(parentNode)
         }
 
+				var encodeDest = this.zkgun.urlUuidTitle({id:newUUID,title:this.newCardData.title})
+
         // Reset Form Data
         this.newCardData = { content: null, parent: null, title: null }
 
 				// Send to viewer
-				this.$router.push('/zk/view/' + newUUID)
+				this.$router.push('/zk/view/' + encodeDest)
       },
 		}
 	}
