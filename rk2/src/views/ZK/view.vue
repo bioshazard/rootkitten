@@ -57,7 +57,6 @@
 					{{zkgun.prettySlashDate(displayCard.created["#"])}}
 				</span>
 			</h4>
-			{{zkgun.prettySlashDate(displayCard.created["#"])}}
 
 			<p>{{displayCard.content}}</p>
 		</div>

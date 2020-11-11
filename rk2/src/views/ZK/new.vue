@@ -19,7 +19,8 @@
 
 <template>
 	<div class="">
-		<h2><input type="text" size="42" placeholder="Parent" v-model="newCardData.parent"> / New Card</h2>
+		<h2>New Card</h2>
+		<p>Parent Card: <input type="text" size="42" placeholder="Parent" v-model="newCardData.parent"></p>
 		<div class="newCard">
 			<form @submit.prevent="addCard">
 				<input ref="title" type="text" class="title" placeholder="Title" v-model="newCardData.title">

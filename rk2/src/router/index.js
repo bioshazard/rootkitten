@@ -2,10 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Sources from '../views/Sources.vue'
+import SourceEdit from '../views/Sources/edit.vue'
 import ZK from '../views/ZK.vue'
 import ZKnew from '../views/ZK/new.vue'
 import ZKview from '../views/ZK/view.vue'
-import ZKdefault from '../views/ZK/default.vue'
+// import ZKdefault from '../views/ZK/default.vue'
 import Config from '../views/Config.vue'
 
 Vue.use(VueRouter)
@@ -27,7 +28,13 @@ const routes = [
   {
     path: '/sources',
     name: 'Sources',
-    component: Sources
+    component: Sources,
+		children: [
+			{
+				path: 'edit/:id/:title?',
+				component: SourceEdit
+			}
+		]
   },
   {
     path: '/zk',
@@ -36,7 +43,7 @@ const routes = [
 		children: [
 			{
 				path: '',
-				component: ZKdefault
+				component: ZKnew
 			},
 			{
 				path: 'new/:id?',
