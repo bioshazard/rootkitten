@@ -10,8 +10,8 @@ pages:
     - cd rk2
     - npm ci
     - npm run build
-    - mv public public-vue
-    - mv dist public
+    - mv dist ../public
+    - cd ..
   artifacts:
     paths:
       - public # artifact path must be /public for GitLab Pages to pick it up
