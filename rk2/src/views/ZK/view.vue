@@ -43,30 +43,19 @@
 		<div class="zkParent">
 			<h4>
 				<router-link v-if="!parentCard.empty" :to="'/zk/view/' + zkgun.urlUuidTitle(parentCard)">{{parentCard.title}}</router-link>
-				<span v-else>Root</span>
-
-				> <router-link :to="'/zk/view/' + zkgun.urlUuidTitle(displayCard)">
-					<!-- Must use $route value to update triggers -->
-					<!-- {{$route.params.id}} -->
-					{{displayCard.title}}
-
-
-				</router-link>
+				<span v-else>Root</span> > <router-link :to="'/zk/view/' + zkgun.urlUuidTitle(displayCard)">{{displayCard.title}}</router-link>
 
 				<span class="zkDate">
 					{{zkgun.prettySlashDate(displayCard.created["#"])}}
 				</span>
 			</h4>
 
-			<p>{{displayCard.content}}</p>
+			<p><vue-markdown>{{displayCard.content}}</vue-markdown></p>
 		</div>
 
 		<div class="zkReplyLink">
-			<router-link  :to="'/zk/new/' + displayCard.id">
-					Reply
-			</router-link>
+			<router-link  :to="'/zk/new/' + displayCard.id">Reply</router-link>
 		</div>
-
 
 		<div class="zkParent" v-for="(reply,index) in replies" :key="index">
 			<h4>
@@ -79,7 +68,7 @@
 				</span>
 
 			</h4>
-			<p>{{reply.title}}</p>
+			<p><vue-markdown>{{reply.content}}</vue-markdown></p>
 		</div>
 
 <!--

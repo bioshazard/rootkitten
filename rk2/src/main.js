@@ -22,6 +22,11 @@ Vue.use(VueGun, { gun: gun });
 import UUID from "vue-uuid";
 Vue.use(UUID);
 
+// Markdown
+import VueMarkdown from "vue-markdown"
+// Vue.use(VueMarkdown);
+Vue.component('vue-markdown', VueMarkdown);
+
 Vue.config.productionTip = false
 
 new Vue({

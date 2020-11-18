@@ -1,0 +1,20 @@
+---
+# https://cli.vuejs.org/guide/deployment.html#gitlab-pages
+stages:
+  - deploy
+
+pages:
+  image: node:latest
+  stage: deploy
+  script:
+    - cd rk2
+    - npm ci
+    - npm run build
+    - mv public public-vue
+    - mv dist public
+    - find publi
+  artifacts:
+    paths:
+      - public # artifact path must be /public for GitLab Pages to pick it up
+    only:
+      - master
