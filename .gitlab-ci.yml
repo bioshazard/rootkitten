@@ -12,7 +12,6 @@ pages:
     - npm run build
     - mv public public-vue
     - mv dist public
-    - find publi
   artifacts:
     paths:
       - public # artifact path must be /public for GitLab Pages to pick it up
