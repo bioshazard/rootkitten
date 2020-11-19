@@ -114,7 +114,7 @@
 				// var rkDomain = 'http://localhost:8080/sources'
 				// var rkDomain = 'https://rk.bioshazard.com/'
 				var fullDomain = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
-				var sourcesPath = fullDomain + '/' + location.pathname '/#/sources';
+				var sourcesPath = fullDomain + '/' + location.pathname + '/#/sources';
 				var bookmarkletJs = "(function() { window.open('" + sourcesPath + "' + '?title=' + document.title + '&text=' + document.URL, '_blank') })();"
 				return encodeURIComponent(bookmarkletJs.replace(/\s/g,''));
 			}
