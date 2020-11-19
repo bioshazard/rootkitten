@@ -50,7 +50,7 @@
 				</span>
 			</h4>
 
-			<p><vue-markdown>{{displayCard.content}}</vue-markdown></p>
+			<vue-markdown>{{displayCard.content}}</vue-markdown>
 		</div>
 
 		<div class="zkReplyLink">
@@ -68,7 +68,7 @@
 				</span>
 
 			</h4>
-			<p><vue-markdown>{{reply.content}}</vue-markdown></p>
+			<vue-markdown>{{reply.content}}</vue-markdown>
 		</div>
 
 <!--
