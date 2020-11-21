@@ -7,7 +7,7 @@ import store from './store'
 // Initialize gun
 import Gun from 'gun'
 // localStorage.clear()
-var gun = new Gun()
+var gun = new Gun(['https://rk.bioshazard.com:8765/gun'])
 
 // My Gun Lib
 import zkgun from './lib/zkgun.js'
