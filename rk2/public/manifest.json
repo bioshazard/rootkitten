@@ -2,7 +2,7 @@
   "short_name": "RootKit2",
   "name": "RootKit2, knowledge graph",
   "share_target": {
-    "action": "/sources",
+    "action": "/rootkit/index.html/#/sources",
     "params": {
       "title": "title",
       "text": "text",
@@ -11,12 +11,12 @@
   },
   "icons": [
     {
-      "src": "/img/192px.png",
+      "src": "/rootkit/img/192px.png",
       "type": "image/png",
       "sizes": "192x192"
     }
   ],
-  "start_url": "/",
+  "start_url": "/rootkit/index.html/#/",
   "background_color": "#ffffff",
   "display": "standalone",
   "theme_color": "#ffffff"
