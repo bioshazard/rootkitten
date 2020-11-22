@@ -31,4 +31,4 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-self.addEventListener('fetch', function(event) {});
+self.addEventListener('fetch', function(event) { console.log('SW Event',event)});
